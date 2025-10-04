@@ -1,4 +1,5 @@
 # TinyMurmur
+Micro-blog built for portfolio 
 
 ### How to run:
 1. `bundle`
@@ -17,3 +18,14 @@
 - Only the post author can delete or modify it.
 - The user can add LIKE to another person's posts.
 - User can comment on post too
+- Real-time updates using Turbo + Stimulus 
+- Fully responsive UI with TailwindCSS + DaisyUI
+
+### Tech Stack
+- **Backend**: Ruby 3.3, Rails 8.0.2 
+- **Database**: PostgreSQL 
+- **Frontend**: Turbo, Stimulus, TailwindCSS, DaisyUI 
+- **Authentication**: Clearance 
+- **Authorization**: Pundit 
+- **Testing**: RSpec, FactoryBot, Shoulda Matchers, Capybara, Selenium
+- **Caching / Queue / Real-time**: solid_cache, solid_queue, solid_cable
