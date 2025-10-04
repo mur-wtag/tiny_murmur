@@ -1,0 +1,18 @@
+<turbo-frame id="flash">
+  <div class="fixed bottom-4 right-4 space-y-2 z-66">
+    <% flash.each do |type, message| %>
+      <% next if message.blank? %>
+      <% css_class = case type.to_sym
+                     when :notice then "alert alert-success"
+                     when :alert  then "alert alert-warning"
+                     when :error  then "alert alert-error"
+                     else "alert"
+                     end %>
+
+      <div data-controller="flash" data-flash-timeout-value="3000" class="<%= css_class %> shadow-lg w-80">
+        <span><%= message %></span>
+      </div>
+    <% end %>
+    <% flash.discard %>
+  </div>
+</turbo-frame>

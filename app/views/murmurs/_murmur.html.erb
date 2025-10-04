@@ -1,0 +1,72 @@
+<div class="card bg-base-100 shadow-md rounded-xl mb-3 p-4" id="<%= dom_id(murmur) %>">
+  <div class="flex justify-<%= controller_name == "murmurs" ? "between" : "end" %> items-center">
+    <% if controller_name == "murmurs" %>
+      <div class="flex items-center space-x-2">
+        <span class="font-semibold"><%= link_to murmur.author.full_name, murmur.author == current_user ? me_path : murmur.author, class: "link" %></span>
+      </div>
+    <% end %>
+
+    <div class="flex">
+      <% if MurmurPolicy.new(current_user, murmur).edit? %>
+        <%= link_to edit_murmur_path(murmur),
+                    class: "link cursor-pointer mr-2",
+                    data: {
+                      turbo_frame: 'modal',
+                      cy: "edit-#{murmur.id}"
+                    } do %>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+            <path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z" />
+            <path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z" />
+          </svg>
+        <% end %>
+      <% end %>
+
+      <% if MurmurPolicy.new(current_user, murmur).destroy? %>
+        <%= link_to murmur,
+                    class: "link cursor-pointer",
+                    data: {
+                      turbo_method: :delete,
+                      turbo_confirm: "Are you sure?",
+                      cy: "delete-#{murmur.id}"
+                    } do %>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+          </svg>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <p class="mt-3 text-gray-700"><%= murmur.content %></p>
+
+  <div class="flex items-center space-x-2 mt-4">
+    <div data-controller="like"
+         data-like-murmur-id-value="<%= murmur.id %>"
+         data-like-liked-value="<%= murmur.liked_by(current_user).exists? %>"
+         data-like-id-value="<%= murmur.liked_by(current_user).take&.id %>">
+
+      <% if MurmurPolicy.new(current_user, murmur).like? %>
+        <button
+          data-action="click->like#toggle"
+          data-like-target="button"
+          class="btn btn-xs <%= murmur.liked_by(current_user).exists? ? "btn-error" : "btn-outline" %>"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
+            <path d="M2 6.342a3.375 3.375 0 0 1 6-2.088 3.375 3.375 0 0 1 5.997 2.26c-.063 2.134-1.618 3.76-2.955 4.784a14.437 14.437 0 0 1-2.676 1.61c-.02.01-.038.017-.05.022l-.014.006-.004.002h-.002a.75.75 0 0 1-.592.001h-.002l-.004-.003-.015-.006a5.528 5.528 0 0 1-.232-.107 14.395 14.395 0 0 1-2.535-1.557C3.564 10.22 1.999 8.558 1.999 6.38L2 6.342Z" />
+          </svg>
+        </button> |
+      <% end %>
+
+      <span class="text-xs opacity-60">like count: </span>
+      <span data-like-target="count" class="text-xs opacity-70">
+        <%= murmur.likes_count %>
+      </span>
+    </div>
+  </div>
+
+  <%= link_to "Add comment", new_murmur_comment_path(murmur), class: "btn btn-xs btn-secondary", data: { turbo_frame: "modal" } %>
+
+  <div id="murmur-<%= murmur.id %>-comments">
+    <%= render partial: "comments/comment", collection: murmur.comments, as: :comment %>
+  </div>
+</div>
